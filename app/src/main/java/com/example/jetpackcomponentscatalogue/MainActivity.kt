@@ -8,9 +8,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -21,10 +19,12 @@ import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.jetpackcomponentscatalogue.ui.theme.CheckInfo
 import com.example.jetpackcomponentscatalogue.ui.theme.JetpackComponentsCatalogueTheme
 
 class MainActivity : ComponentActivity() {
@@ -43,18 +44,93 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
                 ) {
-                    var iconState by rememberSaveable {
-                        mutableStateOf(false)
-                    }
+                    var options = getOptions(listOf("Yeison", "Jhonatan", "Blanca", "Yovany"))
+                    var stateRadio by rememberSaveable { mutableStateOf("Aris") }
                     Column {
-//                        IconComponent(iconState) { iconState = !iconState }
-                        ProgressComponent()
+                        TriStatusCheckBox()
+                        options.forEach {
+                            CheckBoxWithTextComponentAdvanced(it)
+                        }
+                        RadioButtonComponentAdvance(stateRadio) {stateRadio = it}
                     }
                 }
             }
         }
     }
 }
+
+@Composable
+fun RadioButtonComponentAdvance(name: String, onItemSelected: (String) -> Unit){
+
+    Column(Modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            RadioButton(
+                selected = name == "Aris",
+                onClick = { onItemSelected("Aris") },
+            )
+            Text(text = "Aris")
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            RadioButton(
+                selected = name == "Jhonatan",
+                onClick = { onItemSelected("Jhonatan") },
+            )
+            Text(text = "Jhonatan")
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            RadioButton(
+                selected = name == "Yovany",
+                onClick = { onItemSelected("Yovany") },
+            )
+            Text(text = "Yovany")
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            RadioButton(
+                selected = name == "Blanca",
+                onClick = { onItemSelected("Blanca") },
+            )
+            Text(text = "Blanca")
+        }
+    }
+}
+
+@Composable
+fun RadioButtonComponent() {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        RadioButton(
+            selected = true,
+            onClick = { /*TODO*/ },
+            colors = RadioButtonDefaults.colors(
+                selectedColor = Color.Red,
+                unselectedColor = Color.Green,
+                disabledColor = Color.Yellow
+            ),
+            enabled = false
+        )
+        Text(text = "ejemplo 1")
+    }
+}
+
+@Composable
+fun TriStatusCheckBox() {
+    var status by rememberSaveable { mutableStateOf(ToggleableState.Off) }
+    TriStateCheckbox(state = status, onClick = {
+        status = when (status) {
+            ToggleableState.On -> ToggleableState.Off
+            ToggleableState.Off -> ToggleableState.Indeterminate
+            ToggleableState.Indeterminate -> ToggleableState.On
+        }
+    })
+}
+
+@Composable
+fun getOptions(titles: List<String>): List<CheckInfo> {
+    return titles.map {
+        var state by rememberSaveable { mutableStateOf(false) }
+        CheckInfo(title = it, selected = state, onCheckedChange = { newState -> state = newState })
+    }
+}
+
 
 @Composable
 fun Greeting(name: String) {
@@ -66,18 +142,120 @@ fun Greeting(name: String) {
 fun DefaultPreview() {
     var test = true
     JetpackComponentsCatalogueTheme {
-        ProgressComponent()
+        CheckBoxWithTextComponent()
+    }
+}
+
+@Composable
+fun CheckBoxWithTextComponentAdvanced(checkInfo: CheckInfo) {
+    var (title, selected, onCheckedChange) = checkInfo
+    Row(Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Checkbox(checked = selected, onCheckedChange = { onCheckedChange(!selected) })
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = title)
+    }
+}
+
+@Composable
+fun CheckBoxWithTextComponent() {
+    var state by rememberSaveable {
+        mutableStateOf(false)
+    }
+    Row(Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Checkbox(checked = state, onCheckedChange = { state = !state })
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = "Ejemplo 1")
+    }
+}
+
+@Composable
+fun CheckBoxComponent() {
+    var state by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    Checkbox(
+        checked = state,
+        onCheckedChange = { state = !state },
+        enabled = true,
+        colors = CheckboxDefaults.colors(
+            checkedColor = Color.Red,
+            uncheckedColor = Color.Magenta,
+            checkmarkColor = Color.Blue,
+            disabledColor = Color.Green,
+            disabledIndeterminateColor = Color.Yellow
+        )
+    )
+}
+
+@Composable
+fun SwitchComponent() {
+    var switchState by rememberSaveable {
+        mutableStateOf(true)
+    }
+
+    Switch(
+        checked = switchState,
+        onCheckedChange = { switchState = !switchState },
+        enabled = false,
+        colors = SwitchDefaults.colors(
+            checkedThumbColor = Color.Red,
+            checkedTrackColor = Color.Green,
+            uncheckedTrackColor = Color.Blue,
+            uncheckedThumbColor = Color.Magenta,
+            disabledCheckedThumbColor = Color.Yellow,
+            disabledUncheckedThumbColor = Color.Cyan
+        )
+    )
+}
+
+@Composable
+fun ProgressComponentAdvance() {
+    var progressStatus by rememberSaveable {
+        mutableStateOf(0f)
+    }
+    Column(
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LinearProgressIndicator(progress = progressStatus)
+
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Button(onClick = { if (progressStatus <= 1f) progressStatus += 0.1f }) {
+                Text(text = "Incrementar")
+            }
+            Button(onClick = { if (progressStatus > 0f) progressStatus -= 0.1f }) {
+                Text(text = "Reducir")
+            }
+        }
     }
 }
 
 @Composable
 fun ProgressComponent() {
+    var showLoading by rememberSaveable {
+        mutableStateOf(false)
+    }
     Column(
         Modifier
             .fillMaxSize()
-            .padding(24.dp)) {
-        CircularProgressIndicator()
-        LinearProgressIndicator()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (showLoading) {
+            CircularProgressIndicator(color = Color.Red, strokeWidth = 10.dp)
+            LinearProgressIndicator(
+                modifier = Modifier.padding(top = 32.dp),
+                backgroundColor = Color.Green,
+                color = Color.Red
+            )
+        }
+
+        Button(onClick = { showLoading = !showLoading }) {
+            Text(text = "Cargar perfil")
+        }
     }
 }
 
@@ -89,12 +267,10 @@ fun IconComponent(value: Boolean, onChangeValue: () -> Unit) {
             .padding(24.dp)
     ) {
 
-        Icon(
-            imageVector = if (value) Icons.Rounded.Favorite  else Icons.Rounded.FavoriteBorder,
+        Icon(imageVector = if (value) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
             contentDescription = "Icon",
             tint = Color.Red,
-            modifier = Modifier.clickable { onChangeValue() }
-        )
+            modifier = Modifier.clickable { onChangeValue() })
     }
 }
 
