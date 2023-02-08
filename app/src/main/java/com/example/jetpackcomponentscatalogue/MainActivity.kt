@@ -4,15 +4,13 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
@@ -23,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.TextStyle
@@ -46,12 +45,19 @@ class MainActivity : ComponentActivity() {
                 ) {
                     var options = getOptions(listOf("Yeison", "Jhonatan", "Blanca", "Yovany"))
                     var stateRadio by rememberSaveable { mutableStateOf("Aris") }
-                    Column {
+                    Column(Modifier.verticalScroll(rememberScrollState())) {
                         TriStatusCheckBox()
                         options.forEach {
                             CheckBoxWithTextComponentAdvanced(it)
                         }
-                        RadioButtonComponentAdvance(stateRadio) {stateRadio = it}
+                        RadioButtonComponentAdvance(stateRadio) { stateRadio = it }
+                        CardComponent()
+                        BadgeBoxComponent()
+                        DividerComponent()
+                        DropDownMenuComponent()
+                        BasicSlider()
+                        AdvanceSlider()
+                        RangeSliderComponent()
                     }
                 }
             }
@@ -59,8 +65,97 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
-fun RadioButtonComponentAdvance(name: String, onItemSelected: (String) -> Unit){
+fun Greeting(name: String) {
+    Text(text = "Hello $name!")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    var test = true
+    JetpackComponentsCatalogueTheme {
+        BadgeBoxComponent()
+    }
+}
+
+@Composable
+fun DropDownMenuComponent() {
+    var selectedText by rememberSaveable { mutableStateOf("") }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var desserts = listOf("Helado", "Chocolates", "Café", "Fruta", "Natilla", "Chilaquiles")
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+    ) {
+        OutlinedTextField(
+            value = selectedText,
+            onValueChange = { selectedText = it },
+            enabled = false,
+            readOnly = true,
+            modifier = Modifier
+                .clickable { expanded = !expanded }
+                .fillMaxWidth()
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = !expanded },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            desserts.forEach {
+                DropdownMenuItem(onClick = {
+                    expanded = !expanded
+                    selectedText = it
+                }) {
+                    Text(text = it)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DividerComponent() {
+    Divider(Modifier.fillMaxWidth())
+}
+
+@Composable
+fun BadgeBoxComponent() {
+    BadgedBox(badge = {
+        Badge(contentColor = Color.White) {
+            Text(text = "1")
+        }
+    }) {
+        Icon(imageVector = Icons.Default.Star, contentDescription = "Star")
+    }
+}
+
+@Composable
+fun CardComponent() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        elevation = 12.dp,
+        shape = MaterialTheme.shapes.small,
+        backgroundColor = Color.Red,
+        contentColor = Color.Green,
+        border = BorderStroke(5.dp, Color.Green)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = "Ejemplo 1")
+            Text(text = "Ejemplo 2")
+            Text(text = "Ejemplo 3")
+        }
+    }
+}
+
+@Composable
+fun RadioButtonComponentAdvance(name: String, onItemSelected: (String) -> Unit) {
 
     Column(Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -131,20 +226,6 @@ fun getOptions(titles: List<String>): List<CheckInfo> {
     }
 }
 
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    var test = true
-    JetpackComponentsCatalogueTheme {
-        CheckBoxWithTextComponent()
-    }
-}
 
 @Composable
 fun CheckBoxWithTextComponentAdvanced(checkInfo: CheckInfo) {
