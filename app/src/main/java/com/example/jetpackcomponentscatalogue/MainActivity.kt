@@ -45,6 +45,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     var options = getOptions(listOf("Yeison", "Jhonatan", "Blanca", "Yovany"))
                     var stateRadio by rememberSaveable { mutableStateOf("Aris") }
+                    var show by rememberSaveable { mutableStateOf(false) }
+                    var showSimpleDialog by rememberSaveable { mutableStateOf(false) }
+                    var showDialogGoogle by rememberSaveable { mutableStateOf(false) }
+                    var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
+                    var ringToneValue by rememberSaveable { mutableStateOf("") }
+
+                    Log.i("ringtone", ringToneValue)
                     Column(Modifier.verticalScroll(rememberScrollState())) {
                         TriStatusCheckBox()
                         options.forEach {
@@ -58,6 +65,41 @@ class MainActivity : ComponentActivity() {
                         BasicSlider()
                         AdvanceSlider()
                         RangeSliderComponent()
+                        Column(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Button(onClick = { show = !show }) {
+                                Text(text = "Mostrar DialogComponent")
+                            }
+                            Button(onClick = { showSimpleDialog = !showSimpleDialog }) {
+                                Text(text = "Mostrar SimpleCustomDialog")
+                            }
+                            Button(onClick = { showDialogGoogle = !showDialogGoogle }) {
+                                Text(text = "Mostrar Dialog Google")
+                            }
+                            Button(onClick = { showConfirmDialog = !showConfirmDialog }) {
+                                Text(text = "Mostrar Confirm  Dialog")
+                            }
+                        }
+                        DialogComponent(
+                            show = show,
+                            onDismiss = { show = !show },
+                            onConfirm = { Log.i("test", "test dialog") })
+                        SimpleCustomDialog(
+                            show = showSimpleDialog,
+                            onDismiss = { showSimpleDialog = !showSimpleDialog })
+                        CustomDialog(
+                            show = showDialogGoogle,
+                            onDismiss = { showDialogGoogle = !showDialogGoogle })
+                        ConfirmationDialog(
+                            show = showConfirmDialog,
+                            onDismiss = { showConfirmDialog = !showConfirmDialog },
+                            value = ringToneValue,
+                            onChangeRadio = { ringToneValue = it}
+                            )
                     }
                 }
             }
