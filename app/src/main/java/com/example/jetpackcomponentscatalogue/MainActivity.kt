@@ -40,19 +40,29 @@ class MainActivity : ComponentActivity() {
         setContent {
             JetpackComponentsCatalogueTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colors.background)
                 ) {
-                    var options = getOptions(listOf("Yeison", "Jhonatan", "Blanca", "Yovany"))
+                    /*var options = getOptions(listOf("Yeison", "Jhonatan", "Blanca", "Yovany"))
                     var stateRadio by rememberSaveable { mutableStateOf("Aris") }
                     var show by rememberSaveable { mutableStateOf(false) }
                     var showSimpleDialog by rememberSaveable { mutableStateOf(false) }
                     var showDialogGoogle by rememberSaveable { mutableStateOf(false) }
                     var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
                     var ringToneValue by rememberSaveable { mutableStateOf("") }
+                    Log.i("ringtone", ringToneValue)*/
 
-                    Log.i("ringtone", ringToneValue)
-                    Column(Modifier.verticalScroll(rememberScrollState())) {
+                    Column(Modifier.fillMaxWidth()) {
+                        /*SimpleRecyclerView()
+                        SuperHeroView()*/
+//                        SuperHeroGridView()
+                        //SuperHeroWhitSpecialControlsView()
+                        SuperHeroStickyView()
+                    }
+                    /*Column(Modifier.verticalScroll(rememberScrollState())) {
+
                         TriStatusCheckBox()
                         options.forEach {
                             CheckBoxWithTextComponentAdvanced(it)
@@ -98,9 +108,10 @@ class MainActivity : ComponentActivity() {
                             show = showConfirmDialog,
                             onDismiss = { showConfirmDialog = !showConfirmDialog },
                             value = ringToneValue,
-                            onChangeRadio = { ringToneValue = it}
-                            )
-                    }
+                            onChangeRadio = { ringToneValue = it }
+                        )
+
+                    }*/
                 }
             }
         }
